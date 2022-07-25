@@ -1,4 +1,6 @@
 # Speed Up Your Python Program With Concurrency
+Why I'm learning this:
+- Facing efficiency issue calling third party API when I'm building back-end of the PS editor project.
 
 From [Real Python](https://realpython.com/python-concurrency/)
 
@@ -39,3 +41,23 @@ Two problems
 |-------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
 | spends most of its time talking to a slow device                        | spends most of its time doing CPU operations.                                     |
 | Speeding up: **overlapping** the times spent waiting for these devices. | Speeding up: finding ways to do **more computations** in the same amount of time. |
+
+
+### Synchronous Example
+See [synchronous method](synchronous_method.py)
+- It is slow.
+
+### With Threading Example
+See [threading method](threading_method.py)
+![How threading works](https://files.realpython.com/media/Threading.3eef48da829e.png)
+
+### With asyncio Example
+It is simplified. 
+#### Event loop
+maintains a minimum of two lists containing two **states**
+- **Ready state**: task has work, ready to run.
+- **Waiting state**: waiting for some external thing to finish.
+
+It selects **ready** tasks and starts it,
+
+Then that task is in complete control until it cooperatively hands the control back to the event loop.

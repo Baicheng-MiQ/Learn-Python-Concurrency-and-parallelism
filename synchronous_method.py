@@ -1,27 +1,17 @@
-import concurrent.futures
 import requests
-import threading
 import time
 
 
-thread_local = threading.local()
-
-
-def get_session():
-    if not hasattr(thread_local, "session"):
-        thread_local.session = requests.Session()
-    return thread_local.session
-
-
-def download_site(url):
-    session = get_session()
+def download_site(url, session):
     with session.get(url) as response:
         print(f"Read {len(response.content)} from {url}")
 
 
 def download_all_sites(sites):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(download_site, sites)
+    with requests.Session() as session:
+        # Session object allows requests to do some fancy networking tricks
+        for url in sites:
+            download_site(url, session)
 
 
 if __name__ == "__main__":
