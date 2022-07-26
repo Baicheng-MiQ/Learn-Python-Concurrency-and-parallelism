@@ -43,21 +43,36 @@ Two problems
 | Speeding up: **overlapping** the times spent waiting for these devices. | Speeding up: finding ways to do **more computations** in the same amount of time. |
 
 
-### Synchronous Example
+# Synchronous 
 See [synchronous method](synchronous_method.py)
 - It is slow.
 
-### With Threading Example
+## With Threading 
 See [threading method](threading_method.py)
 ![How threading works](https://files.realpython.com/media/Threading.3eef48da829e.png)
 
-### With asyncio Example
-It is simplified. 
-#### Event loop
-maintains a minimum of two lists containing two **states**
+## With asyncio 
+- It is simplified. 
+- Each task takes far fewer resources and less time to create than a thread
+### Event loop
+Maintains a minimum of two lists containing two **states**
 - **Ready state**: task has work, ready to run.
 - **Waiting state**: waiting for some external thing to finish.
 
-It selects **ready** tasks and starts it,
+1. It selects **ready** tasks and starts it,
+2. Then that task is in complete control until it cooperatively hands the control back to the event loop.
+3. the event loop then places that task into either the ready or waiting list 
+4. and then goes through each of the tasks in the waiting list to see if it has become ready by an I/O operation completing. 
+5. Once all the tasks have been sorted into the right list again, the event loop picks the next task to run, and the process repeats. 
 
-Then that task is in complete control until it cooperatively hands the control back to the event loop.
+### `async` and `await`
+- `await` as the magic that allows the task to hand control back to the event loop.
+- `async` as a flag to Python telling it that the function about to be defined with await.
+- **OR** flag this context manager as something that can get swapped out.
+
+### Code
+```pip install aiohttp```
+
+See [asyncio method](asyncio_method.py)
+
+![How asyncio works](https://files.realpython.com/media/Asyncio.31182d3731cf.png)
