@@ -5,8 +5,7 @@ import aiohttp
 
 async def download_site(session, url):
     async with session.get(url) as response:
-        print("Read {0} from {1}".format(response.content_length, url))
-
+        return await response.json()
 
 async def download_all_sites(sites):
     # can share the session across all tasks, so
@@ -17,17 +16,26 @@ async def download_all_sites(sites):
             task = asyncio.ensure_future(download_site(session, url))
                         # takes care of starting them
             tasks.append(task)
-        await asyncio.gather(*tasks, return_exceptions=True)
-            # keep the session context alive until all the tasks have completed.
+        # limit the number of concurrent tasks to 8
+        semaphore = asyncio.Semaphore(8)
+
+        async def sem_task(task_):
+            async with semaphore:
+                return await task_
+
+        # finally run the tasks
+        original_result = await asyncio.gather(*(sem_task(task) for task in tasks))
+        # keep the session context alive until all the tasks have completed.
+    return original_result
 
 
 if __name__ == "__main__":
     sites = [
-        "https://www.jython.org",
-        "http://olympus.realpython.org/dice",
+        "https://digital.ucas.com/coursedisplay/autocomplete?searchTerm=ucl",
     ] * 80
     start_time = time.time()
-    asyncio.run(download_all_sites(sites))
+    result = asyncio.run(download_all_sites(sites))
     # in older versions of python: asyncio.get_event_loop().run_until_complete()
+    print(result)
     duration = time.time() - start_time
     print(f"Downloaded {len(sites)} sites in {duration} seconds")

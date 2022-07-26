@@ -4,7 +4,7 @@ import time
 
 def download_site(url, session):
     with session.get(url) as response:
-        print(f"Read {len(response.content)} from {url}")
+        print(f"Read {response.json()} from {url}")
 
 
 def download_all_sites(sites):
@@ -16,9 +16,8 @@ def download_all_sites(sites):
 
 if __name__ == "__main__":
     sites = [
-        "https://www.jython.org",
-        "http://olympus.realpython.org/dice",
-    ] * 80
+        "https://digital.ucas.com/coursedisplay/autocomplete?searchTerm=peking",
+    ] * 8
     start_time = time.time()
     download_all_sites(sites)
     duration = time.time() - start_time
